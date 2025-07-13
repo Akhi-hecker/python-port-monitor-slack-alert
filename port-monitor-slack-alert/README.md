@@ -1,4 +1,7 @@
 # 🛰️ Port Monitor with Slack Alerts
+![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![Status](https://img.shields.io/badge/status-active-brightgreen)
+![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 
 A Python tool that monitors the availability of specific TCP ports and sends alerts to a Slack channel if a port goes down. It also logs all events with timestamps for auditing or monitoring purposes.
 
