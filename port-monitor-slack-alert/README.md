@@ -99,4 +99,14 @@ Install them using:
 pip install -r requirements.txt
 ```
 ---
+## License
 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 📚 Resources
+
+This project was inspired and built using knowledge gained from:
+
+- [LetsDefend.io](https://letsdefend.io) – Hands-on SOC analyst training and labs.
