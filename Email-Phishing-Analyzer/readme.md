@@ -7,11 +7,7 @@ A web-based tool to analyze `.eml` email files for phishing indicators. Simply u
 
 ## 📁 Project Structure
 
-```
-
 <pre lang="md"> ## 📁 Project Structure ``` Email-Phishing-Analyzer/ ├── app.py # Flask web application entry point ├── analyzer_engine.py # Core logic for analysis orchestration ├── settings.py # Configuration, scoring logic, API keys ├── requirements.txt # Python dependencies ├── readme.md │ ├── analyzers/ # Specialized phishing detection modules │ ├── __init__.py │ ├── utils.py │ ├── header_analyzer.py │ ├── ip_analyzer.py │ ├── url_analyzer.py │ ├── attachment_analyzer.py │ └── content_analyzer.py │ ├── templates/ # HTML templates for UI │ ├── index.html │ └── result.html │ ├── static/ # Optional CSS and JS files │ └── images/ │ └── uploads/ # Folder for uploaded `.eml` email files ``` </pre>
-
-````
 
 ---
 
