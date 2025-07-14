@@ -1,5 +1,3 @@
----
-
 ```markdown
 # 🛡️ Phishing Email Analyzer
 
