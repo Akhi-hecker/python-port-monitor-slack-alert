@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Analysis Result</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 20px auto;
+        }
+        h1 {
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .result-section {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .result-section:last-of-type { /* Target the last relevant section before buttons */
+            border-bottom: none;
+        }
+         .button-group { /* Ensure button group is not affected by last-child border removal */
+            margin-top:30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .result-section h2 {
+            font-size: 18px;
+            color: #333;
+            margin-top:0;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+            display: inline-block;
+        }
+        .score-verdict {
+            display: flex;
+            align-items: baseline;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .score-verdict p {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
+        }
+        .score-verdict .verdict-label {
+            margin-right: 5px;
+        }
+        .score-verdict .verdict-phishing { background-color: #dc3545; color: white; padding: 5px 10px; border-radius: 5px; font-size: 16px; }
+        .score-verdict .verdict-suspicious { background-color: #ffc107; color: #333; padding: 5px 10px; border-radius: 5px; font-size: 16px; }
+        .score-verdict .verdict-safe { background-color: #28a745; color: white; padding: 5px 10px; border-radius: 5px; font-size: 16px; }
+        .score-verdict .verdict-error { background-color: #6c757d; color: white; padding: 5px 10px; border-radius: 5px; font-size: 16px; }
+        
+        ul { list-style-type: none; padding-left: 0; }
+        ul li {
+            background-color: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            font-size: 14px;
+            word-break: break-all;
+        }
+        .reasons li { border-left: 3px solid #dc3545; }
+        .attachment-details, .url-details { font-size: 0.9em; color: #555; margin-left: 15px; padding-left: 10px; border-left: 2px solid #eee; }
+        .attachment-details ul li, .url-details ul li { background-color: #e9ecef; margin-top: 4px;}
+
+        .button-group { text-align: center; }
+        .button-group a {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            margin: 0 10px;
+            display: inline-block;
+            transition: background-color 0.2s;
+        }
+        .button-group a:hover { background-color: #0056b3; }
+        
+        .error-message-box {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .header-item { margin-bottom: 8px; }
+        .header-key { font-weight: bold; color: #0056b3; }
+        .header-value {
+            font-family: "Courier New", Courier, monospace;
+            font-size: 0.9em; word-break: break-all; white-space: pre-wrap;
+            background-color: #e9ecef; padding: 5px; border-radius: 3px;
+            display: block; margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Phishing Analysis Result</h1>
+
+        {% if results and results.error %}
+            <div class="error-message-box">
+                <p><strong>Error during analysis:</strong> {{ results.error }}</p>
+            </div>
+        {% elif results %}
+            <div class="result-section score-verdict">
+                <p><span class="verdict-label">Score:</span><strong>{{ results.score|default('N/A') }}</strong></p>
+                <p><span class="verdict-label">Verdict:</span>
+                    {% set verdict_class = "verdict-error" %}
+                    {% if results.verdict == "Likely Phishing" %}{% set verdict_class = "verdict-phishing" %}
+                    {% elif results.verdict == "Suspicious" %}{% set verdict_class = "verdict-suspicious" %}
+                    {% elif results.verdict == "Likely Safe" %}{% set verdict_class = "verdict-safe" %}
+                    {% endif %}
+                    <span class="{{ verdict_class }}">{{ results.verdict|default('Error') }}</span>
+                </p>
+            </div>
+
+            {% if results.reasons %}
+            <div class="result-section">
+                <h2>Reasons:</h2>
+                <ul class="reasons">
+                    {% for reason in results.reasons %}<li>{{ reason }}</li>{% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            <div class="result-section">
+                <h2>General Information:</h2>
+                <ul>
+                    <li><strong>From:</strong> {{ results.from_full_address_header|default('N/A') }}</li>
+                    <li><strong>To:</strong> {{ results.to|default('N/A') }}</li>
+                    <li><strong>Subject:</strong> {{ results.subject|default('N/A') }}</li>
+                    <li><strong>Date:</strong> {{ results.date|default('N/A') }}</li>
+                    <li><strong>Sender Registrable Domain:</strong> {{ results.sender_domain|default('N/A') }}</li>
+                    <li><strong>Detected Sender IP:</strong> {{ defang_ip(results.sender_ip)|default('Not Found') }}</li>
+                </ul>
+            </div>
+
+            {% if results.sender_ip_reputation %}
+            <div class="result-section">
+                <h2>Sender IP Reputation ({% if results.sender_ip_reputation.ip != 'Not Found' and results.sender_ip_reputation.ip != 'N/A' %}{{ defang_ip(results.sender_ip_reputation.ip) }}{% else %}N/A{% endif %}):</h2>
+                <ul>
+                    {% if results.sender_ip_reputation.error %}
+                        <li>Error: {{ results.sender_ip_reputation.error }}</li>
+                    {% elif results.sender_ip_reputation.ip and results.sender_ip_reputation.ip != 'Not Found' and results.sender_ip_reputation.ip != 'N/A' %}
+                        <li>Abuse Score: {{ results.sender_ip_reputation.abuse_score|default('N/A') }}</li>
+                        <li>Total Reports: {{ results.sender_ip_reputation.total_reports|default('N/A') }}</li>
+                        <li>Country: {{ results.sender_ip_reputation.country|default('N/A') }}</li>
+                        <li>ISP: {{ results.sender_ip_reputation.isp|default('N/A') }}</li>
+                        <li>Associated Domain: {{ results.sender_ip_reputation.domain|default('N/A') }}</li>
+                    {% else %}
+                        <li>No AbuseIPDB information available or IP not found.</li>
+                    {% endif %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if results.extracted_ips %}
+            <div class="result-section">
+                <h2>Other Extracted IPs (from headers/body):</h2>
+                <ul>
+                    {% for ip in results.extracted_ips %}<li>{{ defang_ip(ip) }}</li>{% else %}<li>None</li>{% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if results.url_analysis %}
+            <div class="result-section">
+                <h2>Extracted URLs:</h2>
+                <ul>
+                    {% for url_info in results.url_analysis %}
+                        <li>
+                            <strong>Original:</strong> {{ defang_url(url_info.original) }}
+                            {% if url_info.original.lower().strip('/') != url_info.expanded.lower().strip('/') %}
+                                <br><strong>Expanded:</strong> {{ defang_url(url_info.expanded) }}
+                            {% endif %}
+                            {% if url_info.reasons %}
+                                <div class="url-details">
+                                    Impact: +{{ url_info.score_impact }}
+                                    <br>Reasons:
+                                    <ul>{% for reason in url_info.reasons %}<li>- {{ reason }}</li>{% endfor %}</ul>
+                                </div>
+                            {% endif %}
+                        </li>
+                    {% else %}<li>No URLs found in content.</li>{% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if results.attachment_analysis %}
+            <div class="result-section">
+                <h2>Extracted Attachments:</h2>
+                <ul>
+                    {% for att in results.attachment_analysis %}
+                        <li>
+                            <strong>Filename:</strong> {{ att.filename }} ({{ att.content_type }})
+                            <div class="attachment-details">
+                                SHA256: {{ att.sha256 }} <br>
+                                Size: {{ att.size }} bytes <br>
+                                VT Detections: {{ att.vt_malicious_detections }}
+                                {% if att.analysis_reasons %}
+                                    <br>Score Impact: +{{ att.analysis_score }}
+                                    <br>Reasons:
+                                    <ul>{% for reason in att.analysis_reasons %}<li>- {{ reason }}</li>{% endfor %}</ul>
+                                {% endif %}
+                            </div>
+                        </li>
+                    {% else %}<li>No attachments found.</li>{% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if results.headers %}
+            <div class="result-section">
+                <h2>Relevant Email Headers:</h2>
+                <div>
+                {% set relevant_keys = ["Authentication-Results", "X-Authentication-Results", "ARC-Authentication-Results", "Return-Path", "Reply-To", "Received-SPF", "DKIM-Signature", "DMARC-Filter", "X-Forefront-Antispam-Report", "X-Microsoft-Antispam", "X-Sender-IP", "X-Originating-IP", "X-Real-IP", "Message-ID", "MIME-Version", "Content-Type"] %}
+                
+                {% for key in relevant_keys %}
+                    {% if results.headers.get(key) %}
+                        <div class="header-item">
+                            <span class="header-key">{{ key }}:</span>
+                            <span class="header-value">{{ results.headers.get(key)|string|trim }}</span>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+                {% if results.all_received_headers %}
+                    <div class="header-item">
+                        <span class="header-key">Received (chronological, first to last hop):</span>
+                        {% for rec_header in results.all_received_headers|reverse %} {# Show in order of hops #}
+                             <span class="header-value">{{ rec_header|string|trim }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            
+             <div class="result-section">
+                <h2>Plain Text Body Preview (first 500 chars):</h2>
+                <pre style="white-space: pre-wrap; word-break: break-all; background-color: #f8f9fa; padding: 10px; border-radius: 4px;">{{ results.body_plain_text_preview|default('N/A') }}</pre>
+                <p><strong>HTML Body Present:</strong> {{ 'Yes' if results.body_html_present else 'No' }}</p>
+            </div>
+
+
+        {% else %}
+            <div class="error-message-box"><p>No analysis results to display. Please upload an email to analyze.</p></div>
+        {% endif %}
+
+        <div class="button-group">
+            <a href="{{ url_for('index') }}">Analyze Another Email</a>
+            {% if results and not results.error %}
+            <a href="{{ url_for('download_report') }}">Download Report (txt)</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
