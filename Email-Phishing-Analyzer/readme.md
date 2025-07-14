@@ -79,7 +79,7 @@ VT_API_KEY = "YOUR_VIRUSTOTAL_API_KEY"
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/phishing-analyzer.git
+git clone https://github.com/Akhil-hecker/phishing-analyzer.git
 cd phishing-analyzer
 ```
 
