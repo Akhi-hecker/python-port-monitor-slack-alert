@@ -29,7 +29,7 @@ This is a simple File Integrity Monitoring (FIM) application built in Python. It
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/Akhi-hecker/python-projects.git
+git clone https://github.com/Akhi-hecker/python-projects/python-projects.git
 cd python-projects/fim-python
 ```
 
